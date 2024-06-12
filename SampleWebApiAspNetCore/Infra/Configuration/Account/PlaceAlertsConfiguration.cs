@@ -22,10 +22,17 @@ namespace ContextConfiguration.Account
                 .IsRequired();
 
             builder
+              .Property(x => x.Name)
+              .HasColumnType("varchar")
+              .HasMaxLength(150)
+              .IsRequired();
+
+            builder
               .Property(x => x.CreateDate)
               .HasColumnType("datetime2")
               .HasDefaultValueSql("getdate()")
               .IsRequired();
+         
         }
     }
 }

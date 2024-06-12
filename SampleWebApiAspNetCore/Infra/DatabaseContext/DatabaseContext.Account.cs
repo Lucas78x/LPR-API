@@ -10,10 +10,11 @@ namespace Infrastructure
     {
         public DbSet<AccountDTO> Account { get; set; }
         public DbSet<PlaceAlertsDTO> Alerts { get; set; }
-
+        
         internal static void AccountEntityConfiguration(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new AccountConfiguration());
+            builder.ApplyConfiguration(new PlaceAlertsConfiguration());
             builder.ApplyConfiguration(new PlaceAlertsConfiguration());
         }
     }

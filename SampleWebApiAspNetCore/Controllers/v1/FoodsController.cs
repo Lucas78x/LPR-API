@@ -21,17 +21,19 @@ namespace SampleWebApiAspNetCore.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
 
         private readonly ISender _sender;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
         public AccountController(
-         ISender sender, IMapper mapper)
+         ISender sender, IMapper mapper, IConfiguration configuration)
         {
 
             _sender = sender;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         [ProducesResponseType(201)]
@@ -39,7 +41,14 @@ namespace SampleWebApiAspNetCore.Controllers.v1
         [HttpPost("AccountInfo")]
         public async Task<IActionResult> AccountInfoRequest([FromBody] AccountInfo requestModel)
         {
-            var account = new AccountInfo(requestModel.Email.Encrypt(), requestModel.Password.Encrypt());
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
+
+            var account = new AccountInfo(requestModel.Email, requestModel.Password);
+            account.Encrypt();
+
             var accountModel = _mapper.Map<AccountModel>(await _sender.Send(new AccountByUsernameQuery(account.Email, account.Password)));
 
             if (accountModel == null)
@@ -57,7 +66,10 @@ namespace SampleWebApiAspNetCore.Controllers.v1
         [HttpGet("AlertsInfo")]
         public async Task<IActionResult> AlertsInfoRequest(int AccountId)
         {
-
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
             var result = await _sender.Send(new GetPlaceAlertsByIdQuery((long)AccountId));
 
             if (result.Places == null)
@@ -69,9 +81,33 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             return Ok(result.Places);
         }
 
+        [HttpPost("AddAlert")]
+        public async Task<IActionResult> AddAlert(int AccountId, [FromBody] PlaceAlertsModel Place)
+        {
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
+            try
+            {
+
+                await _sender.Send(new CreatePlaceAlertByIdQuery((long)AccountId, Place));
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+        }
         [HttpGet("CheckRTSP")]
         public async Task<IActionResult> CheckRTSP(string url)
         {
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
             var connectionParameters = new ConnectionParameters(new Uri(url));
             var cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = cancellationTokenSource.Token;
@@ -81,7 +117,7 @@ namespace SampleWebApiAspNetCore.Controllers.v1
                 {
 
                     rtspClient.FrameReceived += (sender, e) =>
-                    { 
+                    {
                     };
 
                     await rtspClient.ConnectAsync(cancellationToken);
@@ -89,12 +125,68 @@ namespace SampleWebApiAspNetCore.Controllers.v1
 
                     return Ok();
                 }
-            }      
+            }
             catch (Exception ex)
             {
                 return NotFound();
             }
 
+        }
+
+        [HttpPost("ChangeEmail")]
+        public async Task<IActionResult> AccountChangeEmailById([FromBody] AccountChangeRequest request)
+        {
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
+
+            var result = await _sender.Send(new AccountInfoChangeByIdQuery(request.Id, SHA256EncriptExtension.Encrypt(request.Value), ChangeTypeEnum.Email));
+
+            if (!result.Result)
+            {
+                return NotFound();
+            }
+
+            return Ok(request.Value);
+        }
+
+        [HttpPost("ChangeName")]
+        public async Task<IActionResult> AccountChangeNameById([FromBody] AccountChangeRequest request)
+        {
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
+
+
+            var result = await _sender.Send(new AccountInfoChangeByIdQuery(request.Id, SHA256EncriptExtension.Encrypt(request.Value), ChangeTypeEnum.Nickname));
+
+            if (!result.Result)
+            {
+                return NotFound();
+            }
+
+            return Ok(request.Value);
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> AccountChangePasswordById([FromBody] AccountChangeRequest request)
+        {
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
+
+
+            var result = await _sender.Send(new AccountInfoChangeByIdQuery(request.Id, SHA256EncriptExtension.Encrypt(request.Value), ChangeTypeEnum.Password));
+
+            if (!result.Result)
+            {
+                return NotFound();
+            }
+
+            return Ok(request.Value);
         }
     }
 }

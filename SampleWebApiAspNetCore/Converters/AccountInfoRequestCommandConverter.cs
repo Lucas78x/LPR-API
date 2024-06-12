@@ -8,9 +8,7 @@ namespace SampleWebApiAspNetCore.Converters
     {
         public static AccountInfo Convert(AccountInfo account)
         {
-            return new AccountInfo(
-                account.Email.Base64Decrypt(),          
-                account.Password.Base64Decrypt());
+            return null;
         }
     }   
 }

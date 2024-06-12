@@ -39,7 +39,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCustomCors("AllowAllOrigins");
 
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer("Server=localhost;Database=LPR;User Id=sa;Password=servidor!@1122;TrustServerCertificate=True"));
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer("Server=localhost;Database=LPR;User Id=sa;Password=1122!@servidor;TrustServerCertificate=True"));
 builder.Services.AddScoped<AccountQueriesRepository>();
 builder.Services.AddTransient<Mediator>();
 builder.Services.AddSingleton<ISender, ScopedSender<Mediator>>();
@@ -56,7 +56,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddVersioning();
 
 builder.Services.AddAutoMapper(typeof(AccountProfile));
-
+builder.Services.AddAuthentication("Bearer");
 var app = builder.Build();
 
 var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();

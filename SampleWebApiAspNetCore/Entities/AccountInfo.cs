@@ -1,4 +1,6 @@
-﻿namespace SampleWebApiAspNetCore.Entities
+﻿using SampleWebApiAspNetCore.Helpers;
+
+namespace SampleWebApiAspNetCore.Entities
 {
     public class AccountInfo
     { 
@@ -16,6 +18,11 @@
         {
             Email = email;
             Password = password;
+        }
+        public void Encrypt()
+        {
+            Email = SHA256EncriptExtension.Encrypt(Email);
+            Password = SHA256EncriptExtension.Encrypt(Password);
         }
     }
 }

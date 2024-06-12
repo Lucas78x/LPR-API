@@ -24,7 +24,7 @@ namespace ContextConfiguration.Account
             builder
                 .Property(x => x.Password)
                 .HasColumnType("varchar")
-                .HasMaxLength(35)
+                .HasMaxLength(150)
                 .IsRequired();
 
 
@@ -55,12 +55,6 @@ namespace ContextConfiguration.Account
                 .HasColumnType("datetime2")
                 .HasDefaultValueSql("getdate()")
                 .IsRequired();
-
-            builder
-                .HasMany(c => c.Alerts)
-                .WithOne()
-                .HasForeignKey("OwnerId");
-
         }
     }
 }

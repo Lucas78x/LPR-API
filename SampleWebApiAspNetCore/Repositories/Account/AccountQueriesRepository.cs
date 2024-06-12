@@ -5,6 +5,8 @@ using DigitalWorldOnline.Commons.Interfaces;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using SampleWebApiAspNetCore.Dtos;
+using SampleWebApiAspNetCore.Enums;
+using SampleWebApiAspNetCore.Models;
 
 
 namespace DigitalWorldOnline.Infrastructure.Repositories.Account
@@ -18,6 +20,50 @@ namespace DigitalWorldOnline.Infrastructure.Repositories.Account
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public async Task<AccountChangeModel?> ChangeAccountInfoChangeByIdAsync(long id, string value, ChangeTypeEnum type)
+        {
+            var result = new AccountChangeModel();
+
+            var dto = await _context.Account
+                 .AsNoTracking()
+                 .FirstOrDefaultAsync(x => x.Id == id);
+            if (dto != null)
+            {
+                switch (type)
+                {
+                    case ChangeTypeEnum.Email:
+                        dto.Email = value;
+                        break;
+                    case ChangeTypeEnum.Password:
+                        dto.Password = value;
+                        break;
+                    case ChangeTypeEnum.Nickname:
+                        dto.Username = value;
+                        break;
+                }
+
+                result.SetResult(true);
+                _context.Update(dto);
+                _context.SaveChanges();
+            }
+            return result;
+        }
+
+        public async Task<PlaceAlertsModel?> CreatePlaceAlertByIdAsync(long id, PlaceAlertsModel alert)
+        {
+
+            var dto = new PlaceAlertsDTO();
+            dto.SetId(alert.Id);
+            dto.SetCreateDate(alert.CreateDate);
+            dto.SetPlaca(alert.Placa);
+            dto.SetName(alert.Name);
+            dto.SetAccountdId(id);
+            _context.Add(dto);
+            _context.SaveChanges();
+
+            return alert;
         }
 
         public async Task<AccountDTO?> GetAccountByUsernameAsync(string email, string password)
@@ -45,7 +91,7 @@ namespace DigitalWorldOnline.Infrastructure.Repositories.Account
 
             var alerts = await _context.Alerts
                 .AsNoTracking()
-                .Where(x => x.OwnerId == id)
+                .Where(x=> x.AccountDTOId == id)
                 .ToListAsync();
 
             if (!alerts.Any())
