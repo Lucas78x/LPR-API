@@ -56,6 +56,10 @@ namespace SampleWebApiAspNetCore.Models
             Password = password;
             Encrypt();
         }
-       
+        public void Encrypt()
+        {
+            Email = SHA256EncriptExtension.Encrypt(Email);
+            Password = SHA256EncriptExtension.Encrypt(Password);
+        }
     }
 }
