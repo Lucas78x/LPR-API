@@ -9,6 +9,7 @@ namespace DigitalWorldOnline.Commons.Interfaces
     public interface IAccountQueriesRepository
     {
         Task<AccountChangeModel?> ChangeAccountInfoChangeByIdAsync(long id, string value, ChangeTypeEnum type);
+        Task<AccountModel?> CreateAccountAsync(AccountModel account);
         Task<PlaceAlertsModel?> CreatePlaceAlertByIdAsync(long id, PlaceAlertsModel alert);
         Task<AccountDTO?> GetAccountByUsernameAsync(string email,string password);
         Task<GetPlaceAlertsByIdQueryDto> GetPlaceAlertsByIdAsync(long id);

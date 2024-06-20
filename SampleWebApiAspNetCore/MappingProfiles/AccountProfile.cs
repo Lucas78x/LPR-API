@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SampleWebApiAspNetCore.Dtos;
+using SampleWebApiAspNetCore.Models;
 
 namespace SampleWebApiAspNetCore.MappingProfiles
 {

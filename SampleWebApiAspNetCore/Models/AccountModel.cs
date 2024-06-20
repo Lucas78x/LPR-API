@@ -1,6 +1,7 @@
 ﻿using SampleWebApiAspNetCore.Enums;
+using SampleWebApiAspNetCore.Helpers;
 
-namespace SampleWebApiAspNetCore.Dtos
+namespace SampleWebApiAspNetCore.Models
 {
     public class AccountModel
 
@@ -39,5 +40,22 @@ namespace SampleWebApiAspNetCore.Dtos
         /// </summary>
         public string Password { get; set; }
 
+        public AccountModel()
+        {
+
+        }
+
+        public AccountModel(CadastroTypeEnum type, string registro, string username, string email, string password)
+        {
+            Alerts = new List<PlaceAlertsModel>();
+            Type = type;
+            CreateDate = DateTime.Now;
+            Registro = registro;
+            Username = username;
+            Email = email;
+            Password = password;
+            Encrypt();
+        }
+       
     }
 }

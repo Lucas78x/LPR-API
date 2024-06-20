@@ -1,7 +1,6 @@
 ﻿
 using DigitalWorldOnline.Commons.Interfaces;
 using MediatR;
-using SampleWebApiAspNetCore.Dtos;
 using SampleWebApiAspNetCore.Models;
 
 namespace DigitalWorldOnline.Application.Separar.Queries

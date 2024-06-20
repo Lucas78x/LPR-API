@@ -1,4 +1,4 @@
-﻿namespace SampleWebApiAspNetCore.Dtos
+﻿namespace SampleWebApiAspNetCore.Models
 {
     public class PlaceAlertsModel
     {

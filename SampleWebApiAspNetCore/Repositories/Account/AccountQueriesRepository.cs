@@ -51,6 +51,16 @@ namespace DigitalWorldOnline.Infrastructure.Repositories.Account
             return result;
         }
 
+        public async Task<AccountModel?> CreateAccountAsync(AccountModel account)
+        {
+
+            var dto = _mapper.Map<AccountDTO>(account);
+            _context.Add(dto);
+            _context.SaveChanges();
+
+            return account;
+        }
+
         public async Task<PlaceAlertsModel?> CreatePlaceAlertByIdAsync(long id, PlaceAlertsModel alert)
         {
 

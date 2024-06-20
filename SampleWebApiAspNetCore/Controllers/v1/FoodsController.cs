@@ -36,6 +36,25 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             _configuration = configuration;
         }
 
+        [HttpPost("CreateAccount")]
+        public async Task<IActionResult> CreateAccount([FromBody] AccountModel account)
+        {
+            if (GetToken() != _configuration["Authentication:TokenKey"])
+            {
+                return Unauthorized();
+            }
+            try
+            {
+                await _sender.Send(new CreateAccountQuery(account));
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+        }
         [ProducesResponseType(201)]
         [ProducesResponseType(401)]
         [HttpPost("AccountInfo")]
@@ -90,7 +109,7 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             }
             try
             {
-
+                
                 await _sender.Send(new CreatePlaceAlertByIdQuery((long)AccountId, Place));
                 return Ok();
 
