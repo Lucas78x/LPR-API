@@ -45,6 +45,8 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             }
             try
             {
+                account.Encrypt();
+
                 await _sender.Send(new CreateAccountQuery(account));
                 return Ok();
 

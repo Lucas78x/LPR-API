@@ -52,9 +52,11 @@ namespace SampleWebApiAspNetCore.Models
             CreateDate = DateTime.Now;
             Registro = registro;
             Username = username;
-            Email = SHA256EncriptExtension.Encrypt(email);
-            Password = SHA256EncriptExtension.Encrypt(password); 
         }
-        
+        public void Encrypt()
+        {
+            Email = SHA256EncriptExtension.Encrypt(Email);
+            Password = SHA256EncriptExtension.Encrypt(Password);
+        }
     }
 }
