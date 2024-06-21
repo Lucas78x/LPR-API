@@ -46,7 +46,6 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             try
             {
                 account.Encrypt();
-
                 await _sender.Send(new CreateAccountQuery(account));
                 return Ok();
 
@@ -70,7 +69,7 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             var account = new AccountInfo(requestModel.Email, requestModel.Password);
             account.Encrypt();
 
-            var accountModel = _mapper.Map<AccountModel>(await _sender.Send(new AccountByUsernameQuery(account.Email, account.Password)));
+            var accountModel  = await _sender.Send(new AccountByUsernameQuery(account.Email, account.Password));
 
             if (accountModel == null)
             {

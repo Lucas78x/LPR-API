@@ -86,6 +86,7 @@ namespace DigitalWorldOnline.Infrastructure.Repositories.Account
             {
                 if (dto.Password == password)
                 {
+                    dto.Password = password;
                     return dto;
                 }
                 else
