@@ -54,9 +54,17 @@ namespace DigitalWorldOnline.Infrastructure.Repositories.Account
         public async Task<AccountModel?> CreateAccountAsync(AccountModel account)
         {
 
-            var dto = _mapper.Map<AccountDTO>(account);
-            _context.Add(dto);
-            _context.SaveChanges();
+            var targetAccount = _context.Account.AsNoTracking().FirstOrDefaultAsync(x => x.Email == account.Email || x.Registro == account.Registro);
+            if (targetAccount == null)
+            {
+                var dto = _mapper.Map<AccountDTO>(account);
+                _context.Add(dto);
+                _context.SaveChanges();
+            }
+            else
+            {
+                return null;
+            }
 
             return account;
         }

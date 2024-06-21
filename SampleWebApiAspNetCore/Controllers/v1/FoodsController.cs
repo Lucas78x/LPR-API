@@ -46,8 +46,15 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             try
             {
                 account.Encrypt();
-                await _sender.Send(new CreateAccountQuery(account));
-                return Ok();
+                var accountResult = await _sender.Send(new CreateAccountQuery(account));
+                if (accountResult != null)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
 
             }
             catch (Exception)
@@ -69,7 +76,7 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             var account = new AccountInfo(requestModel.Email, requestModel.Password);
             account.Encrypt();
 
-            var accountModel  = await _sender.Send(new AccountByUsernameQuery(account.Email, account.Password));
+            var accountModel = await _sender.Send(new AccountByUsernameQuery(account.Email, account.Password));
 
             if (accountModel == null)
             {
@@ -110,7 +117,7 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             }
             try
             {
-                
+
                 await _sender.Send(new CreatePlaceAlertByIdQuery((long)AccountId, Place));
                 return Ok();
 
